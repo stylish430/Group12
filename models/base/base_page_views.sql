@@ -1,22 +1,9 @@
-with source as (
-
-    select *
-    from {{ source('web_schema', 'PAGE_VIEWS') }}
-
-),
-
-cleaned as (
-
-    select
-        _fivetran_id                as page_view_id,
-        page_name                  as page_name,
-        session_id                 as session_id,
-        view_at::timestamp         as viewed_at,
-        _fivetran_deleted          as is_deleted,
-        _fivetran_synced           as synced_at
-
-    from source
-    where _fivetran_deleted = false   
-)
-
-select * from cleaned
+SELECT 
+    "_fivetran_id" AS fivetran_id,
+    "PAGE_NAME" AS page_name,
+    "SESSION_ID" AS session_id,
+    "VIEW_AT" AS view_at_ts,
+    COALESCE(TRY_CAST("_fivetran_deleted" AS BOOLEAN), "_fivetran_deleted"::BOOLEAN, FALSE) AS is_deleted,
+    "_fivetran_synced" AS fivetran_synced_at
+    
+FROM {{ source('web_schema', 'PAGE_VIEWS') }}

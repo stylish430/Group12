@@ -1,26 +1,11 @@
-with source as (
+SELECT 
+    "_fivetran_id" AS fivetran_id,
+    "OS" AS operating_system,
+    "IP" AS ip_address,
+    "CLIENT_ID" AS client_id,
+    "SESSION_ID" AS session_id,
+    "SESSION_AT" AS session_at, 
+    COALESCE("_fivetran_deleted", FALSE) AS is_deleted,
+    "_fivetran_synced" AS fivetran_synced_at
 
-    select *
-    from {{ source('web_schema', 'SESSIONS') }}
-
-),
-
-renamed as (
-
-    select
-        _fivetran_id            as session_row_id,
-        session_id             as session_id,
-        client_id              as client_id,
-        lower(os)              as os,
-        ip                     as ip_address,
-        cast(session_at as timestamp) as session_at,
-        cast(_fivetran_synced as timestamp) as synced_at,
-        cast(_fivetran_deleted as boolean) as is_deleted
-
-    from source
-
-)
-
-select *
-from renamed
-where is_deleted = false
+FROM {{ source('web_schema', 'SESSIONS') }}
