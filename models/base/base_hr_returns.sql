@@ -4,7 +4,7 @@ with source as (
     from {{ source('google_drive_schema', 'HR_RETURNS') }}
 
 ),
-1
+
 renamed as (
 
     select
