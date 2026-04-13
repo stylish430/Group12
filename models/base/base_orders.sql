@@ -1,4 +1,4 @@
--- models/staging/stg_orders.sql
+-- models/base/base_orders.sql
 
 with source as (
 
@@ -6,52 +6,44 @@ with source as (
 
 ),
 
-cleaned as (
+base as (
 
     select
-        _fivetran_id                                                as order_record_id,
+        -- primary key
+        "_fivetran_id"                                               as order_record_id,
+
+        -- foreign keys
         order_id,
         session_id,
 
+        -- customer info
         client_name,
         phone,
-
-        trim(state)                                                 as state,
+        trim(state)                                                  as state,
         shipping_address,
 
-        lower(trim(payment_method))                                 as payment_method,
+        -- payment info
+        lower(trim(payment_method))                                  as payment_method,
         payment_info,
 
-        cast(
-            trim(replace(shipping_cost, 'USD', ''))
-            as numeric
-        )                                                           as shipping_cost_usd,
+        -- shipping cost (strip 'USD' prefix and cast to numeric)
+        try_cast(trim(replace(shipping_cost, 'USD', '')) as numeric) as shipping_cost_usd,
 
-        tax_rate,
+        -- tax
+        tax_rate::numeric                                            as tax_rate,
 
-        cast(order_at as timestamp)                                 as order_at,
-        cast(
-            replace(_fivetran_synced, ' Z', '')
-            as timestamp
-        )                                                           as fivetran_synced_at,
+        -- timestamps normalized to TIMESTAMP_NTZ
+        order_at,
+        convert_timezone('UTC', "_fivetran_synced")::timestamp_ntz  as fivetran_synced_at,
 
-        _fivetran_deleted                                           as is_deleted
+        -- soft delete flag
+        "_fivetran_deleted"                                          as is_deleted
 
     from source
 
-    where _fivetran_deleted = false
-
-),
-
-deduped as (
-
-    select *
-    from cleaned
-    qualify row_number() over (
-        partition by order_id
-        order by fivetran_synced_at desc
-    ) = 1
+    -- exclude soft-deleted records
+    where "_fivetran_deleted" = false
 
 )
 
-select * from deduped
+select * from base

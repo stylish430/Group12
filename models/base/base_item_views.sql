@@ -1,4 +1,4 @@
--- models/staging/stg_cart_events.sql
+-- models/base/base_item_views.sql
 
 with source as (
 
@@ -6,44 +6,35 @@ with source as (
 
 ),
 
-cleaned as (
+base as (
 
     select
-        _fivetran_id                                            as event_id,
+        -- primary key
+        "_fivetran_id"                                               as event_id,
+
+        -- foreign key
         session_id,
 
-        trim(item_name)                                         as item_name,
-        round(cast(price_per_unit as numeric), 2)               as price_per_unit,
+        -- item info
+        trim(item_name)                                              as item_name,
+        round(price_per_unit::numeric, 2)                           as price_per_unit,
 
-        greatest(add_to_cart_quantity, 0)                       as add_to_cart_quantity,
-        greatest(remove_from_cart_quantity, 0)                  as remove_from_cart_quantity,
+        -- cart quantities (coalesce null to 0)
+        coalesce(add_to_cart_quantity, 0)                           as add_to_cart_quantity,
+        coalesce(remove_from_cart_quantity, 0)                      as remove_from_cart_quantity,
 
-        greatest(add_to_cart_quantity, 0)
-            - greatest(remove_from_cart_quantity, 0)            as net_cart_quantity,
+        -- timestamps normalized to TIMESTAMP_NTZ
+        item_view_at,
+        convert_timezone('UTC', "_fivetran_synced")::timestamp_ntz  as fivetran_synced_at,
 
-        cast(item_view_at as timestamp)                         as item_viewed_at,
-        cast(
-            replace(_fivetran_synced, ' Z', '')
-            as timestamp
-        )                                                       as fivetran_synced_at,
-
-        _fivetran_deleted                                       as is_deleted
+        -- soft delete flag
+        "_fivetran_deleted"                                          as is_deleted
 
     from source
 
-    where _fivetran_deleted = false
-
-),
-
-deduped as (
-
-    select *
-    from cleaned
-    qualify row_number() over (
-        partition by event_id
-        order by fivetran_synced_at desc
-    ) = 1
+    -- exclude soft-deleted records
+    where "_fivetran_deleted" = false
 
 )
 
-select * from deduped
+select * from base
