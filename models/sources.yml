@@ -7,28 +7,28 @@ sources:
     tables:
       - name: EXPENSES
         config:
-          loaded_at_field: FIVETRAN_SYNCED_TS
+          loaded_at_field: _FIVETRAN_SYNCED
           freshness:
             warn_after: {count: 48, period: hour}
             error_after: {count: 72, period: hour}
-            
+
       - name: HR_JOINS
         config:
-          loaded_at_field: FIVETRAN_SYNCED_TS
+          loaded_at_field: _FIVETRAN_SYNCED
           freshness:
             warn_after: {count: 48, period: hour}
             error_after: {count: 72, period: hour}
-            
+
       - name: HR_QUITS
         config:
-          loaded_at_field: FIVETRAN_SYNCED_AT
+          loaded_at_field: _FIVETRAN_SYNCED
           freshness:
             warn_after: {count: 48, period: hour}
             error_after: {count: 72, period: hour}
-            
+
       - name: HR_RETURNS
         config:
-          loaded_at_field: FIVETRAN_SYNCED_AT
+          loaded_at_field: _FIVETRAN_SYNCED
           freshness:
             warn_after: {count: 48, period: hour}
             error_after: {count: 72, period: hour}
@@ -39,28 +39,28 @@ sources:
     tables:
       - name: ITEM_VIEWS
         config:
-          loaded_at_field: FIVETRAN_SYNCED_AT
+          loaded_at_field: _FIVETRAN_SYNCED
           freshness:
             warn_after: {count: 24, period: hour}
             error_after: {count: 48, period: hour}
-            
+
       - name: ORDERS
         config:
-          loaded_at_field: FIVETRAN_SYNCED_AT
+          loaded_at_field: _FIVETRAN_SYNCED
           freshness:
             warn_after: {count: 24, period: hour}
             error_after: {count: 48, period: hour}
-            
+
       - name: PAGE_VIEWS
         config:
-          loaded_at_field: FIVETRAN_SYNCED_AT
+          loaded_at_field: _FIVETRAN_SYNCED
           freshness:
             warn_after: {count: 24, period: hour}
             error_after: {count: 48, period: hour}
-            
+
       - name: SESSIONS
         config:
-          loaded_at_field: FIVETRAN_SYNCED_AT
+          loaded_at_field: _FIVETRAN_SYNCED
           freshness:
             warn_after: {count: 24, period: hour}
             error_after: {count: 48, period: hour}
