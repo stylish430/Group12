@@ -12,14 +12,47 @@ sources:
             error_after: {count: 14, period: day}
 
       - name: HR_JOINS
+        config:
+          freshness:
+            warn_after: {count: 7, period: day}
+            error_after: {count: 14, period: day}
+
       - name: HR_QUITS
+        config:
+          freshness:
+            warn_after: {count: 7, period: day}
+            error_after: {count: 14, period: day}
+
       - name: HR_RETURNS
+        config:
+          freshness:
+            warn_after: {count: 7, period: day}
+            error_after: {count: 14, period: day}
 
   - name: web_schema
     database: LOAD
     schema: WEB_SCHEMA
     tables:
       - name: ITEM_VIEWS
+        config:
+          freshness:
+            warn_after: {count: 7, period: day}
+            error_after: {count: 14, period: day}
+
       - name: ORDERS
+        config:
+          freshness:
+            warn_after: {count: 7, period: day}
+            error_after: {count: 14, period: day}
+
       - name: PAGE_VIEWS
+        config:
+          freshness:
+            warn_after: {count: 7, period: day}
+            error_after: {count: 14, period: day}
+
       - name: SESSIONS
+        config:
+          freshness:
+            warn_after: {count: 7, period: day}
+            error_after: {count: 14, period: day}
