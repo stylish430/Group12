@@ -10,3 +10,16 @@ sources:
           freshness:
             warn_after: {count: 48, period: hour}
             error_after: {count: 72, period: hour}
+
+      - name: HR_JOINS
+      - name: HR_QUITS
+      - name: HR_RETURNS
+
+  - name: web_schema
+    database: LOAD
+    schema: WEB_SCHEMA
+    tables:
+      - name: ITEM_VIEWS
+      - name: ORDERS
+      - name: PAGE_VIEWS
+      - name: SESSIONS
