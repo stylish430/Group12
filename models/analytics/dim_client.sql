@@ -42,4 +42,5 @@ select
     coalesce(o.ltv, 0) as lifetime_value,
     case when o.total_orders > 0 then 'Purchaser' else 'Visitor' end as client_category
 from client_base b
-left join order_summary o using (client_id)
+left join order_summary o 
+    on b.client_id = o.client_id

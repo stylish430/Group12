@@ -1,35 +1,38 @@
+-- models/intermediate/int_sessions.sql
 with sessions as (
     select *,
-           row_number() over (partition by session_id order by session_at asc) as rn
+           row_number() over (partition by session_id order by try_to_timestamp(session_at) asc) as rn
     from {{ ref('base_sessions') }}
 ),
-
-int_sessions as (select 
-    cast(session_id as varchar) as session_id,
-    cast(client_id as varchar) as client_id,
-    session_at,
-    operating_system
-from sessions 
-where rn = 1 ),
-
-
+int_sessions as (
+    select
+        cast(session_id as varchar) as session_id,
+        cast(client_id as varchar) as client_id,
+        try_to_timestamp(session_at) as session_at,   
+        operating_system
+    from sessions
+    where rn = 1
+),
 page_views as (
-    select 
+    select
         session_id,
         max(case when page_name = 'shopping_page' then 1 else 0 end) as has_viewed_shopping_page
     from {{ ref('base_page_views') }}
     group by 1
 ),
 item_views as (
-    select 
+    select
         session_id,
         max(case when add_to_cart_quantity > 0 then 1 else 0 end) as has_added_to_cart,
-        max(1) as has_viewed_item 
-    from {{ ref('base_item_views') }} 
+        max(1) as has_viewed_item
+    from {{ ref('base_item_views') }}
     group by 1
 )
-select 
+select
     s.session_id,
+    s.client_id,                       
+    s.session_at,                    
+    s.operating_system,
     coalesce(pv.has_viewed_shopping_page, 0) as has_viewed_shopping_page,
     coalesce(iv.has_viewed_item, 0) as has_viewed_item,
     coalesce(iv.has_added_to_cart, 0) as has_added_to_cart
