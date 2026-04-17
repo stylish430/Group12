@@ -7,7 +7,7 @@ with orders as (
 unique_orders as (
     select * from orders where rn = 1
 ),
--- 额外对退货表去重，防止 JOIN 导致数据膨胀
+
 unique_returns as (
     select *,
            row_number() over (partition by order_id order by returned_at desc) as rn
@@ -28,4 +28,4 @@ select
 from unique_orders o
 left join unique_returns r 
     on cast(o.order_id as varchar) = cast(r.order_id as varchar)
-    and r.rn = 1 -- 确保一个订单只关联一条退货记录
+    and r.rn = 1 
