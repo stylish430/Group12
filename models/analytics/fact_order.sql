@@ -6,7 +6,7 @@ select
     phone as client_phone,
     state as shipping_state,
     payment_method,
-    shipping_cost_usd as revenue, -- 收入指标
+    shipping_cost_usd as shipping_cost, 
     tax_rate,
     order_at,
     is_refunded
