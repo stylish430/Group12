@@ -1,6 +1,6 @@
 -- models/analytics/dim_item.sql
-select distinct
+select
     item_name,
-    avg(price_per_unit) as avg_price_usd
+    array_agg(distinct price_per_unit) as price_list
 from {{ ref('base_item_views') }}
 group by 1

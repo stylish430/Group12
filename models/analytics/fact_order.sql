@@ -1,13 +1,18 @@
 -- models/analytics/fact_order.sql
 select 
-    order_id,
-    session_id,
-    client_name,
-    phone as client_phone,
-    state as shipping_state,
-    payment_method,
-    shipping_cost_usd as shipping_cost, 
-    tax_rate,
-    order_at,
-    is_refunded
-from {{ ref('int_orders') }}
+    o.order_id,
+    o.session_id,
+    s.client_id,
+    o.client_name,
+    o.phone as client_phone,
+    o.state as shipping_state,
+    o.shipping_address,
+    o.payment_method,
+    o.shipping_cost_usd,
+    o.tax_rate,
+    o.order_at,
+    o.is_refunded,
+    o.returned_at
+from {{ ref('int_orders') }} o
+left join {{ ref('int_sessions') }} s
+    on o.session_id = s.session_id
