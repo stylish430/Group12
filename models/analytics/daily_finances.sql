@@ -1,14 +1,4 @@
 -- models/analytics/daily_finances.sql
--- models/intermediate/int_daily_finance_totals.sql
-
-/*
-Assumption:
-We do not have actual order line items.
-We approximate revenue using:
-SUM(price_per_unit * add_to_cart_quantity)
-
-This is a proxy for GMV (Gross Merchandise Value).
-*/
 
 with item_revenue as (
 
